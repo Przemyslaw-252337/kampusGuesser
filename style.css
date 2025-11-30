@@ -1,0 +1,117 @@
+body { margin: 0; font-family: Arial, sans-serif; }
+html, body { height: 100%; }
+#map { height: 100vh; width: 100vw; }
+
+#panel {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #590A0A;
+	color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0003;
+    z-index: 1000;
+    max-width: 260px;
+}
+#panel h2 { margin: 0 0 5px 0; }
+button { 
+	padding: 8px 12px; 
+	font-size: 14px; 
+	cursor: pointer; 
+	margin-top: 5px; 
+	background: white;
+}
+#result, #pointsInfo { margin-top: 6px; font-size: 14px; }
+
+
+#scorePanel {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #590A0A;
+	color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0003;
+    z-index: 1000;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#scorePanel table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#scorePanel th, #scorePanel td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    text-align: left;
+    font-size: 14px;
+}
+
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 2000;
+}
+.overlay.show { display: flex; }
+
+.popupContent {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    animation: popIn .25s ease;
+}
+.popupContent h2 { margin: 0 0 10px; font-size: 24px; }
+.popupContent p { margin: 8px 0; font-size: 16px; }
+.popupContent input {
+    padding: 8px; font-size: 16px; width: 90%;
+    border-radius: 8px; border: 1px solid #ccc; margin-top: 8px;
+}
+.bigButton {
+    margin-top: 12px; padding: 10px 16px; font-size: 15px;
+    cursor: pointer; border-radius: 8px; background: #2f4fa0;
+    color: white; border: none;
+}
+.bigButton.alt { background: #20356d; }
+@keyframes popIn { from{ transform: scale(.9); opacity: .6 } to{ transform: scale(1); opacity: 1 } }
+
+#photoOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 3000;
+}
+#photoOverlay img {
+    max-width: 95vw;
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #000;
+}
+#togglePhotoBtn {
+    margin-top: 15px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #00aaff;
+    color: white;
+    font-weight: bold;
+}
+#photoOverlay.hidden { display: none; }
