@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Upload zdjęcia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="upload-container">
+    <div class="upload-box">
+        <h2 class="title">Dodawanie zdjęcia</h2>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+
+            <div class="input-box">
+                <input type="number" name="lat" step="any" required placeholder=" " class="input-field">
+                <label>Latitude</label>
+            </div>
+
+            <div class="input-box">
+                <input type="number" name="lng" step="any" required placeholder=" " class="input-field">
+                <label>Longitude</label>
+            </div>
+
+            <label class="file-picker">
+                <span id="fileText">Wybierz zdjęcie</span>
+                <input type="file" name="photo" required>
+            </label>
+
+            <button type="submit" id="uploadBtn">
+                Dodaj zdjęcie
+                <div class="upload-loader"></div>
+                <div class="burst"></div>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
