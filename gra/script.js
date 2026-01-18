@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const roundPhoto = document.getElementById("roundPhoto");
     const togglePhotoBtn = document.getElementById("togglePhotoBtn");
     const peekPhotoBtn = document.getElementById("peekPhotoBtn");
+    const teacherLoginBtn = document.getElementById("teacherLoginBtn");
+
+    // Event listener dla przycisku logowania wykładowcy
+    teacherLoginBtn.addEventListener("click", () => {
+        window.location.href = "../logowanie/index.html";
+    });
 
     // Funkcja sprawdzająca, czy punkt jest wewnątrz wielokąta (Ray Casting Algorithm)
     function isPointInPolygon(lat, lng, polygon) {
@@ -129,6 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // fullscreen photo
         roundPhoto.src = loc.image;
         photoOverlay.classList.remove("hidden");
+        setTimeout(() => {
+            photoOverlay.classList.add("show");
+        }, 10);
         togglePhotoBtn.innerText = "Ukryj zdjęcie";
 
         roundInfo.innerText = `Runda: ${currentRound+1} / ${Math.min(locations.length, 5)}`;
@@ -256,17 +265,26 @@ function endGame(){
 
     // Pokazywanie i ukrywanie zdjęcia
     togglePhotoBtn.addEventListener("click",()=>{
-        if(photoOverlay.classList.contains("hidden")){
-            photoOverlay.classList.remove("hidden");
-            togglePhotoBtn.innerText="Ukryj zdjęcie";
-        } else{
-            photoOverlay.classList.add("hidden");
+        if(photoOverlay.classList.contains("show")){
+            photoOverlay.classList.remove("show");
+            setTimeout(() => {
+                photoOverlay.classList.add("hidden");
+            }, 300);
             togglePhotoBtn.innerText="Pokaż zdjęcie";
+        } else{
+            photoOverlay.classList.remove("hidden");
+            setTimeout(() => {
+                photoOverlay.classList.add("show");
+            }, 10);
+            togglePhotoBtn.innerText="Ukryj zdjęcie";
         }
     });
 
     peekPhotoBtn.addEventListener("click", () => {
         photoOverlay.classList.remove("hidden");
+        setTimeout(() => {
+            photoOverlay.classList.add("show");
+        }, 10);
         togglePhotoBtn.innerText="Ukryj zdjęcie";
     });
 
