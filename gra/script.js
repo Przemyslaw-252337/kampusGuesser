@@ -35,16 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalScoreSession = document.getElementById('finalScoreSession');
     const finalScoreTotal = document.getElementById('finalScoreTotal');
     const finalPlace = document.getElementById('finalPlace');
-    // Buttons for playing again or changing the player
-    const playAgainSameBtn = document.getElementById('playAgainSameBtn');
-    const playAgainNewBtn = document.getElementById('playAgainNewBtn');
+    const playAgainSameBtn = document.getElementById('playAgainSameBtn'); // Play again with the same name button
+    const playAgainNewBtn = document.getElementById('playAgainNewBtn'); // Start a new game with a different name button
     const photoOverlay = document.getElementById("photoOverlay");
     const roundPhoto = document.getElementById("roundPhoto");
     const togglePhotoBtn = document.getElementById("togglePhotoBtn");
     const peekPhotoBtn = document.getElementById("peekPhotoBtn");
     const teacherLoginBtn = document.getElementById("teacherLoginBtn");
-    // Miniatura zdjęcia rundy
-    const miniPhoto = document.getElementById("miniPhoto");
+    const miniPhoto = document.getElementById("miniPhoto"); // Miniatura zdjęcia rundy
 
     /**
      * Compute the ranking position of the given player and score without
@@ -136,7 +134,20 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = "http://127.0.0.1:5000/";
     });
 
-    // Funkcja sprawdzająca, czy punkt jest wewnątrz wielokąta (Ray Casting Algorithm)
+    /**
+     * Sprawdza, czy punkt leży wewnątrz wielokąta metodą Ray Casting.
+     *
+     * Funkcja przyjmuje współrzędne geograficzne punktu oraz tablicę
+     * wierzchołków wielokąta.  Wierzchołki mogą być obiektami
+     * Leaflet (`{lat, lng}`) albo tablicami `[lat, lng]`.  Zwraca
+     * `true`, jeśli punkt znajduje się w środku poligonu, i `false`
+     * w przeciwnym razie.
+     *
+     * @param {number} lat – szerokość geograficzna testowanego punktu
+     * @param {number} lng – długość geograficzna testowanego punktu
+     * @param {Array} polygon – tablica wierzchołków wielokąta
+     * @returns {boolean} informacja, czy punkt leży w poligonie
+     */
     function isPointInPolygon(lat, lng, polygon) {
         let inside = false;
         const x = lng, y = lat;
@@ -157,7 +168,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return inside;
     }
 
-    // Funkcja obliczająca odległość w metrach
+    /**
+     * Oblicza odległość wielkiego koła pomiędzy dwoma punktami w metrach.
+     *
+     * Wykorzystuje wzór haversine dla sfery Ziemi (promień ~6371 km).
+     *
+     * @param {number} lat1 – szerokość geograficzna punktu 1
+     * @param {number} lon1 – długość geograficzna punktu 1
+     * @param {number} lat2 – szerokość geograficzna punktu 2
+     * @param {number} lon2 – długość geograficzna punktu 2
+     * @returns {number} odległość w metrach między punktami
+     */
     function distance(lat1, lon1, lat2, lon2) {
         const R = 6371e3;
         const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -168,11 +189,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
+    /**
+     * Tasuje tablicę w miejscu, zwracając nową kolejność elementów.
+     *
+     * Używa losowego sortowania, co nie gwarantuje równomiernego
+     * rozkładu, ale jest wystarczające dla gry.  Funkcja zwraca
+     * odwołanie do tej samej tablicy.
+     *
+     * @param {Array<any>} a – tablica do przetasowania
+     * @returns {Array<any>} ta sama tablica, ale w losowej kolejności
+     */
     function shuffleArray(a){ 
-        return a.sort(()=>Math.random()-0.5);
+        return a.sort(() => Math.random() - 0.5);
     } 
 
-    // Wczytanie danych z JSON
+    /**
+     * Wczytuje dane lokalizacji i terytoriów z pliku JSON ``locations.json``.
+     *
+     * Funkcja pobiera obiekty terytoriów (obszarów) oraz lokalizacji zdjęć.
+     * Pola ``areas`` mogą zawierać starą strukturę (tablica tablic
+     * współrzędnych) lub nowy format z kluczami ``coords`` i ``name``.
+     * Dla każdego obszaru tworzony jest obiekt poligonu na mapie.
+     * Rzutuje widok mapy na pierwszy obszar.  Miejsca zdjęć są
+     * przechowywane w tablicy ``locations``.  Funkcja nie zwraca
+     * wartości, ale modyfikuje zmienne globalne: ``locations``,
+     * ``areas`` i ``polygonLayers``.
+     *
+     * @returns {Promise<void>} obietnica ukończenia wczytywania
+     */
     async function loadLocations() {
         try {
             const res = await fetch("locations.json");
@@ -218,6 +262,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Rozpoczyna nową rundę gry.
+     *
+     * Resetuje wynik wyświetlany w UI, usuwa poprzednie znaczniki i linię,
+     * wczytuje dane zdjęcia dla bieżącej rundy oraz aktualizuje numer
+     * rundy.  Wyświetla duże zdjęcie i ukrywa jego miniaturę.  Ta
+     * funkcja nie zwraca wartości – steruje stanem gry i widokiem.
+     */
     function startRound() {
         resultDiv.innerText = "";
         pointsInfo.innerText = "";
@@ -254,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(polygonLayers.length === 0) return;
 
         const clickPoint = e.latlng;
-        //console.log("Kliknięto:", clickPoint.lat, clickPoint.lng); // Debug
 
         let inAnyArea = false;
 
@@ -263,18 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const poly = polygonLayers[i];
             const polygonCoords = poly.getLatLngs()[0];
             
-            //console.log("Sprawdzam wielokąt", i, ":", polygonCoords); // Debug
             
             const result = isPointInPolygon(clickPoint.lat, clickPoint.lng, polygonCoords);
-            //console.log("Rezultat dla wielokąta", i, ":", result); // Debug
             
             if(result) {
                 inAnyArea = true;
                 break;
             }
         }
-
-        //console.log("Czy w obszarze?", inAnyArea); // Debug
 
         if(!inAnyArea){
             alert("Kliknięcie poza obszarem!");
@@ -334,6 +381,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Koniec gry
+/**
+ * Kończy aktualną partię gry.
+ *
+ * Usuwa znaczniki z mapy, oblicza wynik bieżącej gry i sumuje go
+ * z uprzednio zgromadzonymi punktami.  Wynik jest zapisywany do
+ * ``localStorage`` oraz wysyłany do serwera poprzez endpoint
+ * ``/scores``.  Funkcja aktualizuje ranking lokalnie i na serwerze,
+ * wyświetla podsumowanie i pokazuje popup z końcową informacją.
+ */
 function endGame(){
     if(guessMarker) map.removeLayer(guessMarker);
     if(correctMarker) map.removeLayer(correctMarker);
@@ -500,6 +556,17 @@ function endGame(){
     });
 
     // Funkcja aktualizująca tabelę wyników
+    /**
+     * Wypełnia tabelę rankingową danymi z serwera lub z localStorage.
+     *
+     * Funkcja najpierw próbuje pobrać aktualny ranking z API
+     * (``/scores``).  Jeśli to się nie uda, używa kopii zapasowej
+     * z ``localStorage``.  Następnie sortuje wpisy malejąco według
+     * wyniku i aktualizuje wiersze tabeli w dokumencie.  Brak
+     * zwracanej wartości – funkcja działa na DOM bezpośrednio.
+     *
+     * @returns {Promise<void>} obietnica zakończenia aktualizacji
+     */
     async function updateScoreTable() {
         const tbody = document.querySelector("#scoreTable tbody");
         tbody.innerHTML = "";

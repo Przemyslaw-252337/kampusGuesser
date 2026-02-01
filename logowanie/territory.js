@@ -7,7 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPolyline = null;
     let polygons = [];
 
-    // Sprawdzenie, czy użytkownik jest zalogowany
+    /**
+     * Sprawdzenie, czy użytkownik jest zalogowany jako nauczyciel.
+     *
+     * Funkcja wysyła zapytanie GET do endpointu ``/check-login``.  Gdy
+     * odpowiedź zawiera ``logged_in: false`` lub gdy wystąpi błąd
+     * sieci, użytkownik jest przekierowywany z powrotem na stronę
+     * logowania (``index.html``).  Używana na starcie strony.
+     *
+     * @returns {Promise<void>} – obietnica zakończenia sprawdzenia
+     */
     async function checkLogin() {
         try {
             const res = await fetch('http://127.0.0.1:5000/check-login');
@@ -21,7 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Wczytaj terytoria z API i narysuj je na mapie oraz w liście
+    /**
+     * Wczytuje listę obszarów gry (terytriów) z API i rysuje je na mapie.
+     *
+     * Funkcja pobiera dane z endpointu ``/areas`` i oczekuje tablicy
+     * obiektów zawierających współrzędne i nazwy.  Dla każdego
+     * terytorium tworzy wielokąt na mapie oraz element listy z
+     * przyciskami: "Podświetl", "Zmień nazwę" i "Usuń".  W
+     * przypadku błędów wyświetla komunikat w konsoli.
+     *
+     * @returns {Promise<void>} – obietnica zakończenia wczytywania
+     */
     async function loadAreas() {
         try {
             const res = await fetch('http://127.0.0.1:5000/areas');
@@ -112,6 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Inicjalizuje mapę Leaflet oraz wczytuje obszary.
+     *
+     * Ustawia widok mapy na kampus PŁ, dodaje warstwę kafelkową
+     * OpenStreetMap i wywołuje ``loadAreas()`` w celu narysowania
+     * terytoriów.
+     */
     function initMap() {
         map = L.map('territoryMap').setView([51.7531, 19.4519], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -126,6 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const finishBtn = document.getElementById('finishDrawBtn');
     const cancelBtn = document.getElementById('cancelDrawBtn');
 
+    /**
+     * Obsługuje kliknięcia na mapie podczas rysowania nowego terytorium.
+     *
+     * Jeżeli tryb rysowania jest aktywny (``drawing`` jest ``true``),
+     * kolejne kliknięcia dodają wierzchołki do tablicy ``currentCoords``
+     * i rysują tymczasową polyline.  W przeciwnym wypadku funkcja nie
+     * wykonuje żadnego działania.
+     *
+     * @param {Object} e – zdarzenie Leaflet zawierające współrzędne kliknięcia
+     */
     function onMapClick(e) {
         if (!drawing) return;
         const { lat, lng } = e.latlng;

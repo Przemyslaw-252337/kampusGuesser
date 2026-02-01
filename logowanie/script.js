@@ -39,6 +39,19 @@ if (loginForm) {
     });
 }
 
+// ---------------- POWRÓT DO GRY ----------------
+// Obsługuje kliknięcie przycisku powrotu do gry na stronie logowania.
+// Po kliknięciu przekierowuje użytkownika z powrotem na główną grę
+// uruchomioną na porcie 5500.  Przycisk jest dostępny tylko na
+// stronie logowania, dlatego sprawdzamy jego istnienie przed
+// rejestrowaniem zdarzenia.
+const backToGameBtn = document.getElementById('backToGameBtn');
+if (backToGameBtn) {
+    backToGameBtn.addEventListener('click', () => {
+        window.location.href = 'http://127.0.0.1:5500/';
+    });
+}
+
 // ---------------- UPLOAD ----------------
 const uploadForm = document.getElementById("uploadForm");
 if (uploadForm) {

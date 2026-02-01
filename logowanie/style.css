@@ -350,6 +350,13 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Przyciski powrotu (``back-btn``) na stronie logowania dziedziczą
+   ogólny styl przycisków, ale dodajemy nieco większy margines
+   powyżej, aby oddzielić je wizualnie od formularza. */
+.back-btn {
+    margin-top: 16px;
+}
+
 
 /* STATUSY */
 #loginStatus, #status {

@@ -30,7 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let editingChoice = false; // czy czekamy na wskazanie nowej lokalizacji
     let newMarker = null;      // marker dla nowej lokalizacji podczas edycji
 
-    // Sprawdzenie sesji nauczyciela
+    /**
+     * Sprawdza, czy użytkownik ma aktywną sesję nauczyciela.
+     *
+     * Funkcja wywołuje endpoint ``/check-login``.  Gdy
+     * odpowiedź wskaże, że użytkownik nie jest zalogowany,
+     * automatycznie przekierowuje go na stronę logowania.
+     * W przypadku błędu sieci również następuje przekierowanie.
+     *
+     * @returns {Promise<void>} obietnica zakończenia sprawdzenia
+     */
     async function checkLogin() {
         try {
             const res = await fetch('http://127.0.0.1:5000/check-login');
@@ -44,7 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Inicjalizacja mapy
+    /**
+     * Inicjalizuje mapę Leaflet do zarządzania zdjęciami.
+     *
+     * Ustawia środek mapy na kampus i dodaje warstwę OSM.  Rejestruje
+     * obsługę kliknięć na mapie – kliknięcie ustawia współrzędne
+     * dla nowego zdjęcia, jeśli formularz dodawania jest aktywny;
+     * zamyka panel zdjęcia w innych trybach.  W trybie wyboru nowej
+     * lokalizacji (``editingChoice``) kliknięcia są ignorowane, aż do
+     * potwierdzenia lub anulowania.
+     */
     function initMap() {
         map = L.map('photoMap').setView([51.7531, 19.4519], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -93,7 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Tworzy domyślną ikonę dla nowej lokalizacji (używa standardowej ikony Leaflet)
+    /**
+     * Tworzy domyślną ikonę znacznika używaną dla nowej lokalizacji.
+     *
+     * Używa standardowej ikonki z pakietu Leaflet (nie wymaga własnych
+     * obrazków).  Ta funkcja ułatwia ponowne wykorzystanie ikony
+     * podczas edycji zdjęcia.
+     *
+     * @returns {L.Icon} nowa instancja ikony
+     */
     function createNewIcon() {
         return new L.Icon({
             iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
@@ -105,7 +131,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Wczytaj listę zdjęć z API, narysuj markery i wypełnij listę miniatur
+    /**
+     * Wczytuje listę zdjęć z API, rysuje markery i wypełnia galerię miniatur.
+     *
+     * Funkcja pobiera dane z endpointu ``/locations``, usuwa istniejące
+     * markery, tworzy nowe markery dla każdej lokalizacji i buduje
+     * elementy listy z miniaturami.  Kliknięcie miniatury lub markera
+     * otwiera panel informacji o zdjęciu.  W razie błędu informacja
+     * zapisywana jest w konsoli.
+     *
+     * @returns {Promise<void>} obietnica wczytania zdjęć
+     */
     async function loadPhotos() {
         try {
             const res = await fetch('http://127.0.0.1:5000/locations');
@@ -144,7 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Podświetl miniaturę wybranego zdjęcia, usuń zaznaczenie z innych
+    /**
+     * Podświetla miniaturę wybranego zdjęcia i usuwa zaznaczenie z innych.
+     *
+     * Ustawia klasę CSS ``selected`` na elemencie listy o podanym
+     * indeksie i usuwa tę klasę z pozostałych elementów.  Przekazanie
+     * wartości ``null`` usunie podświetlenie ze wszystkich miniatur.
+     *
+     * @param {number|null} index – indeks podświetlanej miniatury lub null
+     */
     function highlightThumbnail(index) {
         if (!photosList) return;
         const items = photosList.children;
@@ -158,7 +202,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Ukryj wszystkie markery poza wskazanym indeksem
+    /**
+     * Ukrywa wszystkie markery poza wskazanym indeksem.
+     *
+     * Iteruje po liście markerów i usuwa je z mapy (jeśli są
+     * widoczne) dla wszystkich pozycji poza ``index``.  Nie
+     * wywołuje ``removeLayer`` dla markera w podanym indeksie.
+     *
+     * @param {number} index – indeks markera, który ma pozostać na mapie
+     */
     function hideMarkersExcept(index) {
         markers.forEach((m, i) => {
             if (i !== index) {
@@ -169,7 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Przywróć wszystkie markery na mapę
+    /**
+     * Przywraca wszystkie ukryte markery na mapę.
+     *
+     * Sprawdza każdy marker i dodaje go z powrotem do mapy, jeśli
+     * został wcześniej usunięty.  Używane po zakończeniu edycji lub
+     * zamknięciu panelu zdjęcia.
+     */
     function showAllMarkers() {
         markers.forEach(m => {
             if (!map.hasLayer(m)) {
@@ -178,7 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Otwarcie panelu informacji o zdjęciu
+    /**
+     * Otwiera panel informacji o wybranym zdjęciu.
+     *
+     * Funkcja przywraca wszystkie znaczniki, usuwa tymczasowe
+     * znaczniki (dodawania lub edycji), podświetla odpowiednią
+     * miniaturę i tworzy popup z nazwą pliku, współrzędnymi oraz
+     * przyciskami (powiększ, edytuj, usuń, zamknij).  Kliknięcie
+     * przycisku "Edytuj" uruchamia panel edycji poprzez
+     * ``showEditPanel()``.
+     *
+     * @param {number} index – indeks zdjęcia w tablicy ``photosData``
+     */
     function openPhotoPanel(index) {
         // Przywróć wszystkie markery przed schowaniem, aby uniknąć zaniku przy zmianie selekcji
         showAllMarkers();
@@ -275,7 +344,21 @@ document.addEventListener('DOMContentLoaded', () => {
         marker.bindPopup(container, { closeButton: false, offset: [0, -10], closeOnClick: false }).openPopup();
     }
 
-    // Panel edycji dla zdjęcia
+    /**
+     * Wyświetla panel edycji współrzędnych dla zdjęcia.
+     *
+     * Tworzy popup z polami do wprowadzenia nowych wartości
+     * współrzędnych, przyciskiem wyboru punktu na mapie, przyciskiem
+     * potwierdzenia zmian oraz przyciskiem anulowania.  Podczas
+     * edycji wyświetlany jest znacznik starej lokalizacji z tooltipem.
+     * Wybranie punktu na mapie tworzy tymczasowy marker ``newMarker``
+     * z tooltipem "Nowa lokalizacja" i odblokowuje przycisk
+     * "Potwierdź".  Po potwierdzeniu wysyłane jest żądanie PUT do
+     * API w celu aktualizacji współrzędnych.  Anulowanie usuwa
+     * tymczasowy marker i przywraca poprzedni panel.
+     *
+     * @param {number} index – indeks zdjęcia w tablicy ``photosData``
+     */
     function showEditPanel(index) {
         const photo = photosData[index];
         const marker = markers[index];

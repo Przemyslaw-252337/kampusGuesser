@@ -1,7 +1,16 @@
 // Panel administracyjny – obsługa przycisków, weryfikacja sesji i wylogowanie
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Sprawdź, czy sesja logowania jest aktywna
+    /**
+     * Sprawdza, czy sesja logowania jest aktywna.
+     *
+     * Funkcja wysyła zapytanie do ``/check-login``.  Jeśli
+     * odpowiedź jest negatywna lub wystąpi błąd, przekierowuje
+     * użytkownika na stronę logowania.  Używana podczas
+     * inicjalizacji panelu administracyjnego.
+     *
+     * @returns {Promise<void>} – obietnica zakończenia sprawdzenia
+     */
     async function checkLogin() {
         try {
             const res = await fetch('http://127.0.0.1:5000/check-login');

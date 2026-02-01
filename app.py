@@ -19,6 +19,21 @@ SCORES_FILE = 'scores.json'
 # LOGOWANIE
 @app.route('/login', methods=['POST'])
 def login():
+    """
+    Authenticate a user based on email and password.
+
+    This endpoint accepts a JSON payload containing keys
+    ``email`` and ``password``.  The credentials are compared
+    against entries in ``users.json`` (if present) or a default
+    admin account.  When a match is found the server sets
+    ``session["logged_in"] = True`` to indicate a logged‑in
+    session and returns ``{"success": True}``.  If no match is
+    found, the function returns ``{"success": False}``.
+
+    :returns: A JSON object with ``success`` set to True when the
+              login succeeds, otherwise False.
+    :rtype: flask.Response
+    """
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
@@ -27,6 +42,7 @@ def login():
         with open('users.json') as f:
             users = json.load(f)
     else:
+        # Domyślna nazwa użytkownika
         users = [{"email": "admin@uni.pl", "password": "123456"}]
 
     for user in users:
@@ -36,14 +52,45 @@ def login():
 
     return jsonify({"success": False})
 
-# SESJA
+# SPRAWDZANIE SESJI
 @app.route('/check-login')
 def check_login():
+    """
+    Return login status of the current session.
+
+    This simple GET endpoint returns a JSON object with a single
+    boolean field ``logged_in``.  It reads the ``logged_in`` key
+    from the session and returns ``False`` if the key is not set.
+    It can be used by the front‑end to verify whether the user
+    needs to be redirected to the login page.
+
+    :returns: JSON indicating whether the current user is logged in.
+    :rtype: flask.Response
+    """
     return jsonify({"logged_in": session.get("logged_in", False)})
 
 # UPLOAD
 @app.route('/upload', methods=['POST'])
 def upload():
+    """
+    Upload a photo and its coordinates to the server.
+
+    This endpoint requires that the user is authenticated (the
+    ``logged_in`` session key must be True).  It expects a multipart
+    form submission with a file field named ``photo`` containing
+    an image and two form fields ``lat`` and ``lng`` containing
+    the latitude and longitude.  The image is saved in the ``images``
+    directory under a unique filename.  The coordinates and the
+    image path are appended to ``gra/locations.json`` under the
+    ``locations`` key.  If the upload succeeds, the function
+    returns ``{"success": True, "filename": <name>}``.  In case of
+    missing data or errors it returns ``{"success": False, "error":
+    <message>}``.
+
+    :returns: JSON response indicating success or failure and
+              additional details such as the saved filename.
+    :rtype: flask.Response
+    """
     if not session.get("logged_in"):
         return jsonify({"success": False, "error": "Brak dostępu"})
 
@@ -85,6 +132,8 @@ def upload():
         loc["lat"] == float(lat) and loc["lng"] == float(lng) and loc["image"] == f"images/{filename}"
         for loc in data["locations"]
     )
+
+    # Dodawanie lokalizacji
     if not exists:
         data["locations"].append({
             "lat": float(lat),
@@ -92,6 +141,7 @@ def upload():
             "image": f"images/{filename}"
         })
 
+    # Zapisywanie zmian
     with open(LOCATIONS_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
@@ -99,10 +149,35 @@ def upload():
 
 @app.route('/images/<path:filename>')
 def serve_image(filename):
+    """
+    Serve an image file from the ``images`` directory.
+
+    This route allows the browser to retrieve uploaded photos by
+    specifying the ``filename`` path relative to the ``images``
+    directory.  It uses Flask's ``send_from_directory`` to
+    efficiently stream the requested file.
+
+    :param filename: Relative path to the image file within the
+                     ``images`` directory.
+    :type filename: str
+    :returns: The requested file as a response object.
+    :rtype: flask.Response
+    """
     return send_from_directory("images", filename)
 
 @app.route('/')
 def index():
+    """
+    Serve the root static HTML page.
+
+    When a GET request is made to the root ``/``, this function
+    returns the ``index.html`` file from the ``static_folder``
+    (configured as the ``logowanie`` folder).  It allows the
+    front‑end single page application to be served by Flask.
+
+    :returns: A static file response containing ``index.html``.
+    :rtype: flask.Response
+    """
     return app.send_static_file('index.html')
 
 # ------------------- RANKING -------------------
