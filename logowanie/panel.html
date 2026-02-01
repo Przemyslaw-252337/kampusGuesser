@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel administracyjny</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+    <!-- Kontener główny -->
+    <div class="upload-container">
+        <div class="upload-box">
+            <h2 class="title">Panel administracyjny</h2>
+            <p>Wybierz jedną z dostępnych opcji:</p>
+            <div style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
+                <button id="editTerritoryBtn" class="admin-btn">Zmień terytorium gry</button>
+                <button id="editPhotosBtn" class="admin-btn">Edycja zdjęć</button>
+                <button id="logoutBtn" class="admin-btn" style="margin-top:20px;">Wyloguj</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="panel.js"></script>
+</body>
+</html>

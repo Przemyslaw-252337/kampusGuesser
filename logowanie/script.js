@@ -12,7 +12,7 @@ if (loginForm) {
         const password = this.querySelector('input[type="password"]').value;
 
         try {
-            const res = await fetch('/login', {
+            const res = await fetch('http://127.0.0.1:5000/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -23,7 +23,8 @@ if (loginForm) {
             if (data.success) {
                 button.innerText = 'Zalogowano!';
                 button.style.background = '#28a745';
-                setTimeout(() => window.location.href = 'upload.html', 1000);
+                // Po pomyślnym logowaniu przekieruj do panelu wyboru
+                setTimeout(() => window.location.href = 'panel.html', 1000);
             } else {
                 button.innerText = 'Błąd logowania';
                 button.style.background = '#dc3545';
@@ -59,7 +60,7 @@ if (uploadForm) {
     // Sprawdzenie sesji
     window.addEventListener("DOMContentLoaded", async () => {
         try {
-            const res = await fetch("/check-login");
+            const res = await fetch("http://127.0.0.1:5000/check-login");
             const data = await res.json();
             if (!data.logged_in) window.location.href = "index.html";
         } catch (err) {
@@ -79,7 +80,7 @@ if (uploadForm) {
         const formData = new FormData(uploadForm);
 
         try {
-            const res = await fetch("/upload", { method: "POST", body: formData });
+            const res = await fetch("http://127.0.0.1:5000/upload", { method: "POST", body: formData });
             const data = await res.json();
 
             loader.style.opacity = "0";

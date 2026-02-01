@@ -18,6 +18,8 @@
     <button id="confirmBtn" disabled>Zatwierdź</button>
     <button id="nextBtn" style="display:none;">Następna runda</button>
     <button id="peekPhotoBtn">Podejrzyj zdjęcie</button>
+    <!-- miniatura zdjęcia rundy; ukryta gdy pełne zdjęcie jest wyświetlane -->
+    <img id="miniPhoto" class="miniThumbnail" src="" alt="Miniatura zdjęcia" style="display:none;">
 </div>
 
 <!-- NOWY PANEL WYNIKÓW po lewej -->
@@ -51,10 +53,15 @@
 <div id="endPopup" class="overlay">
     <div class="popupContent">
         <h2>Koniec gry!</h2>
-        <p id="finalScore"></p>
+        <!-- Punkty zdobyte w tej grze -->
+        <p id="finalScoreSession"></p>
+        <!-- Punkty sumaryczne dla gracza w wielu grach -->
+        <p id="finalScoreTotal"></p>
+        <!-- Miejsce w rankingu -->
         <p id="finalPlace"></p>
-        <button id="restartBtn" class="bigButton alt">Restart</button>
-        <button id="closePopupBtn" class="bigButton" style="margin-left:8px;">Zamknij</button>
+        <!-- Przyciski wyboru dalszego działania -->
+        <button id="playAgainSameBtn" class="bigButton alt">Zagraj ponownie</button>
+        <button id="playAgainNewBtn" class="bigButton" style="margin-left:8px;">Zmień gracza</button>
     </div>
 </div>
 

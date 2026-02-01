@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edycja zdjęć</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body class="management">
+    <div class="management-container">
+        <!-- Lewy panel: mapa zdjęć -->
+        <div class="left-pane">
+            <div class="map-container" id="photoMapContainer">
+                <div id="photoMap" style="width:100%; height:100%;"></div>
+            </div>
+        </div>
+        <!-- Prawy panel: przyciski i lista miniatur -->
+        <div class="right-pane">
+            <h2 class="title">Edycja zdjęć</h2>
+            <button id="backToPanelBtn" class="admin-btn small-btn">Powrót</button>
+            <!-- Przycisk dodawania nowego zdjęcia -->
+            <button id="toggleAddFormBtn" class="admin-btn small-btn">Dodaj nowe zdjęcie</button>
+            <!-- Formularz dodawania zdjęcia (ukryty domyślnie) -->
+            <div id="addFormContainer" style="display:none;">
+                <p style="font-size:14px; color:#590A0A;">Kliknij na mapie, aby ustawić współrzędne nowego zdjęcia lub wpisz je ręcznie.  Następnie wybierz plik JPG/JPEG.</p>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="input-box">
+                        <input type="number" name="lat" step="any" required placeholder=" " class="input-field" id="latInput">
+                        <label>Latitude</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="number" name="lng" step="any" required placeholder=" " class="input-field" id="lngInput">
+                        <label>Longitude</label>
+                    </div>
+                    <label class="file-picker">
+                        <span id="fileText">Wybierz zdjęcie</span>
+                        <input type="file" name="photo" accept=".jpg,.jpeg" required>
+                    </label>
+                    <button type="submit" id="uploadBtn">
+                        Dodaj
+                        <div class="upload-loader"></div>
+                        <div class="burst"></div>
+                    </button>
+                </form>
+                <!-- Komunikaty błędu / sukcesu -->
+                <div id="fileErrorMsg" style="display:none; color:#c0392b; margin-top:6px;"></div>
+                <div id="uploadMessage" style="display:none; color:#28a745; margin-top:6px;"></div>
+            </div>
+            <h3 style="color:#590A0A; margin-top:20px;">Lista zdjęć</h3>
+            <!-- Przewijalna lista miniatur -->
+            <div class="list-container">
+                <ul id="photosList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="photos.js"></script>
+</body>
+</html>

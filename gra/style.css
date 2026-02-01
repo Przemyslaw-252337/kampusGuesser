@@ -258,3 +258,13 @@ button {
     transform: translateY(2px);
     border-bottom: 2px solid #2D0505;
 }
+
+/* Miniatura zdjęcia pod przyciskiem "Podejrzyj zdjęcie" */
+#panel #miniPhoto {
+    margin-top: 8px;
+    width: 100%;
+    max-height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}

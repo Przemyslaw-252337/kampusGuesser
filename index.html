@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!--
+    This file acts as the landing page for the Kampus Guesser project.
+
+    When the project is served from the root of the repository (for example
+    using VS Code’s live server), the browser will look for an index.html
+    file at the root. Previously no such file existed and the browser
+    displayed a directory listing instead of loading the actual game.
+
+    To solve this we create a minimal index that immediately redirects
+    the user to the game contained in the “gra” folder.  The redirection
+    happens on page load and does not rely on JavaScript so it works in
+    most browsers.
+-->
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=./gra/index.html">
+    <title>Kampus Guesser</title>
+  </head>
+  <body>
+    <noscript>
+      <a href="./gra/index.html">Przejdź do gry</a>
+    </noscript>
+  </body>
+</html>

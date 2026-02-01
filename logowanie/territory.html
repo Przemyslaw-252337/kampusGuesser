@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Zarządzanie terytorium</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body class="management">
+    <div class="management-container">
+        <!-- Lewy panel: mapa -->
+        <div class="left-pane">
+            <div class="map-container" id="territoryMapContainer">
+                <div id="territoryMap" style="width:100%; height:100%;"></div>
+            </div>
+        </div>
+        <!-- Prawy panel: kontrolki i lista -->
+        <div class="right-pane">
+            <h2 class="title">Zarządzanie terytorium gry</h2>
+            <button id="backToPanelBtn" class="admin-btn small-btn">Powrót</button>
+            <p style="font-size:14px;">Dodawaj, usuwaj lub edytuj obszary gry. Kliknij "Nowe terytorium", aby rozpocząć rysowanie granic na mapie. Po zakończeniu kliknij "Zapisz terytorium".</p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <button id="startDrawBtn" class="admin-btn">Nowe terytorium</button>
+                <button id="finishDrawBtn" class="admin-btn" style="display:none;">Zapisz terytorium</button>
+                <button id="cancelDrawBtn" class="admin-btn" style="display:none;">Anuluj</button>
+            </div>
+            <h3>Istniejące terytoria</h3>
+            <div class="list-container">
+                <ul id="areasList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="territory.js"></script>
+</body>
+</html>
