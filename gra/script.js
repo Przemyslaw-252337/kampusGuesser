@@ -1,3 +1,10 @@
+// ---------------- ADRESY / KONFIGURACJA ----------------
+// Nie hardkoduj IP. Skrypt automatycznie używa hosta, pod którym otwarto stronę.
+const HOST = window.location.hostname;
+const PROTOCOL = window.location.protocol;
+const API_BASE = `${PROTOCOL}//${HOST}:5000`;
+const GAME_BASE = `${PROTOCOL}//${HOST}:5500`;
+
 document.addEventListener('DOMContentLoaded', () => {
     const map = L.map('map');
 
@@ -62,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let scores = [];
         // Try to fetch from the API
         try {
-            const res = await fetch('http://127.0.0.1:5000/scores');
+            const res = await fetch(API_BASE + '/scores');
             if (res.ok) {
                 scores = await res.json();
             }
@@ -131,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     teacherLoginBtn.addEventListener("click", () => {
         // Przekieruj na stronę logowania nauczyciela serwowaną przez ten sam serwer statyczny
         // (port 5500). Pozwoli to otworzyć panel w podfolderze logowanie i obsłużyć sesję
-        window.location.href = "http://127.0.0.1:5000/";
+        window.location.href = API_BASE + '/';
     });
 
     /**
@@ -422,7 +429,7 @@ function endGame(){
         // Spróbuj zapisać łączny wynik na serwerze
         let serverSuccess = false;
         try {
-            const res = await fetch('http://127.0.0.1:5000/scores', {
+            const res = await fetch(API_BASE + '/scores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: player, score: totalAccumulated })
@@ -456,7 +463,7 @@ function endGame(){
         let place = 0;
         if (serverSuccess) {
             try {
-                const serverScores = await fetch('http://127.0.0.1:5000/scores').then(r => r.json());
+                const serverScores = await fetch(API_BASE + '/scores').then(r => r.json());
                 place = serverScores.findIndex(x => x.name === player && x.score === totalAccumulated) + 1;
             } catch (e) {
                 console.warn('Nie można pobrać rankingu z serwera, używam lokalnego:', e);
@@ -575,7 +582,7 @@ function endGame(){
         let scores = [];
         let fromServer = false;
         try {
-            const res = await fetch('http://127.0.0.1:5000/scores');
+            const res = await fetch(API_BASE + '/scores');
             if (res.ok) {
                 scores = await res.json();
                 fromServer = true;

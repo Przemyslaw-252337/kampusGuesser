@@ -1,3 +1,10 @@
+// ---------------- ADRESY / KONFIGURACJA ----------------
+// Nie hardkoduj IP. Skrypt automatycznie używa hosta, pod którym otwarto stronę.
+const HOST = window.location.hostname;
+const PROTOCOL = window.location.protocol;
+const API_BASE = `${PROTOCOL}//${HOST}:5000`;
+const GAME_BASE = `${PROTOCOL}//${HOST}:5500`;
+
 // Skrypt zarządzania terytorium gry z podświetlaniem, zmianą nazwy, powrotem i pełnoekranową mapą
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function checkLogin() {
         try {
-            const res = await fetch('http://127.0.0.1:5000/check-login');
+            const res = await fetch(API_BASE + '/check-login', { credentials: 'include' });
             const data = await res.json();
             if (!data.logged_in) {
                 window.location.href = 'index.html';
@@ -43,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function loadAreas() {
         try {
-            const res = await fetch('http://127.0.0.1:5000/areas');
+            const res = await fetch(API_BASE + '/areas', {
+                credentials: 'include' });
             const areas = await res.json();
             // Usuń istniejące wielokąty
             polygons.forEach(obj => {
@@ -96,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const newName = prompt('Podaj nową nazwę dla terytorium:', name);
                     if (!newName) return;
                     try {
-                        await fetch(`http://127.0.0.1:5000/areas/${index}`, {
+                        await fetch(`${API_BASE}/areas/${index}`, { credentials: 'include',
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ name: newName })
@@ -116,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 remBtn.addEventListener('click', async () => {
                     if (!confirm('Na pewno usunąć terytorium?')) return;
                     try {
-                        await fetch(`http://127.0.0.1:5000/areas/${index}`, { method: 'DELETE' });
+                        await fetch(`${API_BASE}/areas/${index}`, { credentials: 'include', method: 'DELETE' });
                         await loadAreas();
                     } catch (e) {
                         console.error('Błąd podczas usuwania terytorium:', e);
@@ -200,7 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Wyślij obszar do API z domyślną nazwą.  Nazwa może zostać zmieniona później.
         try {
-            const res = await fetch('http://127.0.0.1:5000/areas', {
+            const res = await fetch(API_BASE + '/areas', {
+                credentials: 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ area: currentCoords })

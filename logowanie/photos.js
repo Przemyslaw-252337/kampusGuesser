@@ -1,3 +1,10 @@
+// ---------------- ADRESY / KONFIGURACJA ----------------
+// Nie hardkoduj IP. Skrypt automatycznie używa hosta, pod którym otwarto stronę.
+const HOST = window.location.hostname;
+const PROTOCOL = window.location.protocol;
+const API_BASE = `${PROTOCOL}//${HOST}:5000`;
+const GAME_BASE = `${PROTOCOL}//${HOST}:5500`;
+
 // Nowy skrypt obsługujący edycję zdjęć w panelu nauczyciela.
 // W tej wersji wszystkie istniejące zdjęcia są od razu widoczne na mapie,
 // a lista po prawej stronie zawiera jedynie miniatury.  Kliknięcie w
@@ -42,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function checkLogin() {
         try {
-            const res = await fetch('http://127.0.0.1:5000/check-login');
+            const res = await fetch(API_BASE + '/check-login', { credentials: 'include' });
             const data = await res.json();
             if (!data.logged_in) {
                 window.location.href = 'index.html';
@@ -144,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function loadPhotos() {
         try {
-            const res = await fetch('http://127.0.0.1:5000/locations');
+            const res = await fetch(API_BASE + '/locations', { credentials: 'include' });
             photosData = await res.json();
             // Usuń dotychczasowe markery z mapy
             markers.forEach(m => map.removeLayer(m));
@@ -168,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const thumb = document.createElement('img');
                 thumb.className = 'thumb';
                 // jeśli ścieżka zaczyna się od images/, dodaj host
-                thumb.src = p.image.startsWith('images/') ? `http://127.0.0.1:5000/${p.image}` : p.image;
+                thumb.src = p.image.startsWith('images/') ? `${API_BASE}/${p.image}` : p.image;
                 thumb.alt = p.image;
                 thumb.title = p.image.split('/').pop();
                 li.appendChild(thumb);
@@ -294,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         viewBtn.className = 'small-btn';
         viewBtn.textContent = 'Powiększ';
         viewBtn.addEventListener('click', () => {
-            const src = photo.image.startsWith('images/') ? `http://127.0.0.1:5000/${photo.image}` : photo.image;
+            const src = photo.image.startsWith('images/') ? `${API_BASE}/${photo.image}` : photo.image;
             window.open(src, '_blank');
         });
         btnContainer.appendChild(viewBtn);
@@ -313,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         delBtn.addEventListener('click', async () => {
             if (!confirm('Na pewno usunąć to zdjęcie?')) return;
             try {
-                await fetch(`http://127.0.0.1:5000/locations/${index}`, { method: 'DELETE' });
+                await fetch(`${API_BASE}/locations/${index}`, { credentials: 'include', method: 'DELETE' });
                 marker.closePopup();
                 await loadPhotos();
                 showAllMarkers();
@@ -416,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newLat = latInputEdit.value;
             const newLng = lngInputEdit.value;
             try {
-                const res = await fetch(`http://127.0.0.1:5000/locations/${index}`, {
+                const res = await fetch(`${API_BASE}/locations/${index}`, { credentials: 'include',
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ lat: newLat, lng: newLng })
@@ -568,7 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loader) loader.style.opacity = '1';
             const formData = new FormData(uploadForm);
             try {
-                const res = await fetch('http://127.0.0.1:5000/upload', {
+                const res = await fetch(API_BASE + '/upload', {
+                credentials: 'include',
                     method: 'POST',
                     body: formData
                 });

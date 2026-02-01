@@ -1,3 +1,10 @@
+// ---------------- ADRESY / KONFIGURACJA ----------------
+// Nie hardkoduj IP. Skrypt automatycznie używa hosta, pod którym otwarto stronę.
+const HOST = window.location.hostname;
+const PROTOCOL = window.location.protocol;
+const API_BASE = `${PROTOCOL}//${HOST}:5000`;
+const GAME_BASE = `${PROTOCOL}//${HOST}:5500`;
+
 // Panel administracyjny – obsługa przycisków, weryfikacja sesji i wylogowanie
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function checkLogin() {
         try {
-            const res = await fetch('http://127.0.0.1:5000/check-login');
+            const res = await fetch(API_BASE + '/check-login', { credentials: 'include' });
             const data = await res.json();
             if (!data.logged_in) {
                 // brak sesji – przekieruj na stronę logowania
@@ -48,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', async () => {
             // wyślij żądanie wylogowania do API
             try {
-                await fetch('http://127.0.0.1:5000/logout', { method: 'POST' });
+                await fetch(API_BASE + '/logout', { credentials: 'include', method: 'POST' });
             } catch (e) {
                 console.error('Błąd podczas wylogowywania:', e);
             }

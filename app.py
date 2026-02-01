@@ -313,9 +313,16 @@ def add_cors_headers(response):
     Add CORS headers to each response to allow the front‑end running on
     a different port (e.g. 5500) to communicate with this API.
     """
-    # Allow requests from any origin.  For production you may restrict this
-    # to the exact origin (e.g. http://127.0.0.1:5500).
-    response.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+    # When the browser sends cookies (credentials), Access-Control-Allow-Origin
+    # cannot be '*'. We therefore echo back the request Origin when present.
+    origin = request.headers.get('Origin')
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        # Make caches aware that the response varies by Origin.
+        response.headers.setdefault('Vary', 'Origin')
+    else:
+        # Same-origin requests may omit Origin; use the current host.
+        response.headers['Access-Control-Allow-Origin'] = request.host_url.rstrip('/')
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
     response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,PUT,DELETE'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -463,4 +470,4 @@ def update_area(index):
 # temu dekoratory zarejestrują się przed startem aplikacji, co pozwala
 # obsłużyć metody PUT/DELETE dla terytoriów i lokalizacji.
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='10.128.25.199', debug=True)

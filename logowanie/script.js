@@ -1,3 +1,10 @@
+// ---------------- ADRESY / KONFIGURACJA ----------------
+// Nie hardkoduj IP. Skrypt automatycznie używa hosta, pod którym otwarto stronę.
+const HOST = window.location.hostname;
+const PROTOCOL = window.location.protocol;
+const API_BASE = `${PROTOCOL}//${HOST}:5000`;
+const GAME_BASE = `${PROTOCOL}//${HOST}:5500`;
+
 // ---------------- LOGOWANIE ----------------
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
@@ -12,7 +19,8 @@ if (loginForm) {
         const password = this.querySelector('input[type="password"]').value;
 
         try {
-            const res = await fetch('http://127.0.0.1:5000/login', {
+            const res = await fetch(API_BASE + '/login', {
+                credentials: 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -48,7 +56,7 @@ if (loginForm) {
 const backToGameBtn = document.getElementById('backToGameBtn');
 if (backToGameBtn) {
     backToGameBtn.addEventListener('click', () => {
-        window.location.href = 'http://127.0.0.1:5500/';
+        window.location.href = GAME_BASE + '/';
     });
 }
 
@@ -73,7 +81,7 @@ if (uploadForm) {
     // Sprawdzenie sesji
     window.addEventListener("DOMContentLoaded", async () => {
         try {
-            const res = await fetch("http://127.0.0.1:5000/check-login");
+            const res = await fetch(API_BASE + '/check-login', { credentials: 'include' });
             const data = await res.json();
             if (!data.logged_in) window.location.href = "index.html";
         } catch (err) {
@@ -93,7 +101,7 @@ if (uploadForm) {
         const formData = new FormData(uploadForm);
 
         try {
-            const res = await fetch("http://127.0.0.1:5000/upload", { method: "POST", body: formData });
+            const res = await fetch(API_BASE + '/upload', { credentials: 'include', method: "POST", body: formData });
             const data = await res.json();
 
             loader.style.opacity = "0";
